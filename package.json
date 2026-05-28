@@ -1,0 +1,18 @@
+{
+  "name": "saiclaws-nuxt",
+  "description": "SAIClaws CPA 智能学习平台 - Nuxt 3 重制版",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview"
+  },
+  "dependencies": {
+    "@iconify-json/lucide": "^1.2.110",
+    "@nuxt/ui": "^4.8.0",
+    "@nuxtjs/supabase": "^2.0.9",
+    "nuxt": "^4.4.6",
+    "vue": "^3.5.35"
+  }
+}
