@@ -37,12 +37,12 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 const open = ref(false)
 const input = ref('')
 const messages = ref<{ role: string; content: string }[]>([])
 const loading = ref(false)
-const chatBody = ref<HTMLElement>()
+const chatBody = ref<HTMLElement | null>(null)
 
 const EDGE_URL = 'https://lwoqjahqneosnummjlbo.supabase.co/functions/v1/ai_chat'
 
