@@ -5,20 +5,25 @@ export default defineNuxtConfig({
 
   modules: [
     '@nuxt/ui',
-    '@nuxtjs/supabase'
+    '@nuxtjs/supabase',
+    '@nuxt/content'   // Markdown 内容管理
   ],
 
-  // 引入 Nuxt UI 的 Tailwind 样式
   css: ['~/assets/css/main.css'],
 
-  // Supabase 配置
+  // Nuxt Content 配置
+  content: {
+    highlight: {
+      theme: 'github-dark'
+    }
+  },
+
   supabase: {
     url: 'https://lwoqjahqneosnummjlbo.supabase.co',
     key: 'sb_pub…riaf',
     redirect: false
   },
 
-  // 暗色模式
   colorMode: {
     preference: 'dark'
   }

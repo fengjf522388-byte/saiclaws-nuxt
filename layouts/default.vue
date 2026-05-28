@@ -39,6 +39,9 @@
     <!-- ============ 页面内容 ============ -->
     <slot />
 
+    <!-- ============ AI 悟空聊天 ============ -->
+    <AiChat />
+
     <!-- ============ 全局搜索弹窗 ============ -->
     <UDashboardSearch
       :groups="searchGroups"
@@ -78,6 +81,10 @@ const navItems = computed<NavigationMenuItem[][]>(() => [
     label: '学习日记',
     icon: 'i-lucide-book-open',
     to: '/diary'
+  }, {
+    label: '学习文章',
+    icon: 'i-lucide-file-text',
+    to: '/articles'
   }],
   [{
     label: '备忘录',
