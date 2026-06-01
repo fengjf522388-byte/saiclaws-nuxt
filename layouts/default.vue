@@ -98,6 +98,10 @@ const navItems = computed<NavigationMenuItem[][]>(() => [
     label: '收藏夹',
     icon: 'i-lucide-bookmark',
     to: '/bookmarks'
+  }, {
+    label: '☯️ 易经寻路',
+    icon: 'i-lucide-compass',
+    to: '/iching'
   }]
 ])
 
