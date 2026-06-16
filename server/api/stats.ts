@@ -5,10 +5,11 @@ export default defineEventHandler(async (event) => {
   const client = await serverSupabaseClient(event)
   const today = new Date().toISOString().slice(0, 10)
 
-  const [{ count: kb }, { count: diary }, { count: memos }] = await Promise.all([
+  const [{ count: kb }, { count: diary }, { count: memos }, { count: records }] = await Promise.all([
     client.from('knowledge_base').select('*', { count: 'exact', head: true }).neq('is_deleted', true),
     client.from('study_diary').select('*', { count: 'exact', head: true }).neq('is_deleted', true),
     client.from('daily_memos').select('*', { count: 'exact', head: true }).eq('memo_date', today).neq('is_deleted', true),
+    client.from('study_records').select('*', { count: 'exact', head: true }).neq('is_deleted', true).catch(() => ({ count: 0 })),
   ])
 
   const { data: cards } = await client.from('flashcards').select('id').neq('is_deleted', true)
@@ -22,6 +23,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     knowledge: kb || 0, diary: diary || 0, todayMemos: memos || 0, srsDue,
+    studyRecords: records || 0,
     pomoToday: sessions?.reduce((s, r: any) => s + (r.pomodoro_count || 0), 0) || 0,
     pomoMinutes: sessions?.reduce((s, r: any) => s + (r.duration_minutes || 0), 0) || 0
   }

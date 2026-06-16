@@ -52,7 +52,7 @@
           </div>
         </UCard>
 
-        <!-- 双栏 -->
+        <!-- 双栏 — 备忘录 + 日记 -->
         <div class="grid lg:grid-cols-2 gap-6">
           <!-- 备忘录 — 来自 /api/memos -->
           <UCard>
@@ -73,6 +73,28 @@
             </div>
           </UCard>
 
+          <!-- 最近学习胶囊 💊 -->
+          <UCard>
+            <template #header>
+              <div class="flex items-center justify-between w-full">
+                <h2 class="text-sm font-semibold text-(--ui-text-muted) uppercase tracking-wider">💊 最近学习胶囊</h2>
+                <NuxtLink to="/study-records" class="text-xs text-(--ui-primary)">全部 →</NuxtLink>
+              </div>
+            </template>
+            <p v-if="!recentRecords?.length" class="text-(--ui-text-muted) text-sm py-4 text-center">
+              还没有学习胶囊<br>
+              <NuxtLink to="/study-records" class="text-(--ui-primary) text-xs">创建第一颗 →</NuxtLink>
+            </p>
+            <div v-for="r in recentRecords?.slice(0, 5)" :key="r.id" class="flex items-center gap-3 py-2 border-b border-(--ui-border) last:border-0">
+              <span class="text-xs text-(--ui-text-muted) w-16 flex-shrink-0">{{ r.study_date?.slice(5) }}</span>
+              <span class="text-sm flex-1 truncate">{{ r.title }}</span>
+              <UBadge :color="r.subject === '会计' ? 'primary' : r.subject === '税法' ? 'secondary' : 'success'" variant="soft" size="xs">{{ r.subject }}</UBadge>
+            </div>
+          </UCard>
+        </div>
+
+        <!-- 双栏 — 最近日记 -->
+        <div class="grid lg:grid-cols-2 gap-6">
           <!-- 日记 — 来自 /api/diary -->
           <UCard>
             <template #header>
@@ -117,6 +139,11 @@ const { data: diaries } = await useAsyncData('recent-diary', () =>
   $fetch('/api/diary')
 )
 
+// 学习记录 💊 — useFetch SSR
+const { data: recentRecords } = await useAsyncData('recent-records', () =>
+  $fetch('/api/study-records', { query: { limit: 5 } })
+)
+
 // 打卡天数 — useState 跨组件共享
 const streak = useState('streak', () => 0)
 
@@ -134,10 +161,11 @@ const greeting = computed(() => {
   return '晚上好'
 })
 
-const stats = computed(() => statsData.value || { knowledge: 0, diary: 0, todayMemos: 0, srsDue: 0, pomoToday: 0 })
+const stats = computed(() => statsData.value || { knowledge: 0, diary: 0, todayMemos: 0, srsDue: 0, pomoToday: 0, studyRecords: 0 })
 
 const statCards = computed(() => [
   { icon: '📚', label: '知识库条目', value: stats.value.knowledge, bgClass: 'bg-(--ui-primary)/10' },
+  { icon: '💊', label: '学习胶囊', value: stats.value.studyRecords, bgClass: 'bg-(--ui-info)/10' },
   { icon: '📝', label: '学习日记', value: stats.value.diary, bgClass: 'bg-(--ui-secondary)/10' },
   { icon: '📇', label: '待复习闪卡', value: stats.value.srsDue, bgClass: 'bg-(--ui-success)/10' },
   { icon: '🍅', label: '今日番茄', value: stats.value.pomoToday, bgClass: 'bg-(--ui-warning)/10' },

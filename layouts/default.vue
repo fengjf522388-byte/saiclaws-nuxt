@@ -73,6 +73,10 @@ const navItems = computed<NavigationMenuItem[][]>(() => [
     icon: 'i-lucide-library',
     to: '/knowledge'
   }, {
+    label: '学习记录',
+    icon: 'i-lucide-pill',
+    to: '/study-records'
+  }, {
     label: '闪卡复习',
     icon: 'i-lucide-cards',
     to: '/flashcards',

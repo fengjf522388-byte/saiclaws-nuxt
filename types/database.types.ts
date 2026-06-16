@@ -90,3 +90,20 @@ export interface Bookmark {
   is_deleted: boolean
   created_at: string
 }
+
+export interface StudyRecord {
+  id: number
+  subject: string           // '会计' | '税法' | '经济法'
+  chapter_no: number
+  chapter_name: string
+  title: string
+  content: string | null
+  key_takeaways: string[] | null
+  difficulty_rating: number  // 1-5
+  study_date: string
+  study_minutes: number
+  tags: string[] | null
+  is_deleted: boolean
+  created_at: string
+  updated_at: string
+}

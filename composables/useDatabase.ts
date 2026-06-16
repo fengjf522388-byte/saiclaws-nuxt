@@ -136,11 +136,12 @@ export function useDatabase() {
   const fetchStats = async () => {
     const today = new Date().toISOString().slice(0, 10)
 
-    const [{ count: kb }, { count: diary }, { count: memos },
+    const [{ count: kb }, { count: diary }, { count: memos }, { count: records },
            dueCards, sessions] = await Promise.all([
       client.from('knowledge_base').select('*', { count: 'exact', head: true }).neq('is_deleted', true),
       client.from('study_diary').select('*', { count: 'exact', head: true }).neq('is_deleted', true),
       client.from('daily_memos').select('*', { count: 'exact', head: true }).eq('memo_date', today).neq('is_deleted', true),
+      client.from('study_records').select('*', { count: 'exact', head: true }).neq('is_deleted', true).catch(() => ({ count: 0 })),
       fetchDueFlashcards(),
       fetchTodaySessions()
     ])
@@ -149,10 +150,47 @@ export function useDatabase() {
       knowledge: kb || 0,
       diary: diary || 0,
       todayMemos: memos || 0,
+      studyRecords: records || 0,
       srsDue: dueCards.length,
       pomoToday: sessions.reduce((s: number, r: any) => s + (r.pomodoro_count || 0), 0),
       pomoMinutes: sessions.reduce((s: number, r: any) => s + (r.duration_minutes || 0), 0)
     }
+  }
+
+  // ============ 学习记录 💊 ============
+  const fetchStudyRecords = async (filters?: { subject?: string; chapter_no?: number }) => {
+    let q = client.from('study_records')
+      .select('*').neq('is_deleted', true)
+      .order('study_date', { ascending: false })
+      .order('chapter_no')
+    if (filters?.subject) q = q.eq('subject', filters.subject)
+    if (filters?.chapter_no) q = q.eq('chapter_no', filters.chapter_no)
+    const { data } = await q
+    return data || []
+  }
+
+  const fetchStudyRecordsByChapter = async (subject?: string) => {
+    let q = client.from('study_records')
+      .select('*').neq('is_deleted', true)
+      .order('chapter_no').order('study_date', { ascending: false })
+    if (subject) q = q.eq('subject', subject)
+    const { data } = await q
+    return data || []
+  }
+
+  const saveStudyRecord = async (item: Partial<any>) => {
+    const { error } = await client.from('study_records').insert(item)
+    if (error) throw error
+  }
+
+  const updateStudyRecord = async (id: number, item: Partial<any>) => {
+    const { error } = await client.from('study_records').update(item).eq('id', id)
+    if (error) throw error
+  }
+
+  const deleteStudyRecord = async (id: number) => {
+    const { error } = await client.from('study_records').update({ is_deleted: true }).eq('id', id)
+    if (error) throw error
   }
 
   // ============ 连续打卡 ============
@@ -182,6 +220,7 @@ export function useDatabase() {
     fetchFlashcards, fetchDueFlashcards, saveFlashcard, saveFlashcardReview,
     fetchTodaySessions, saveSession,
     fetchBookmarks, saveBookmark,
+    fetchStudyRecords, fetchStudyRecordsByChapter, saveStudyRecord, updateStudyRecord, deleteStudyRecord,
     fetchStats, fetchStreak
   }
 }
